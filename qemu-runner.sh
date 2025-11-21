@@ -4,7 +4,7 @@ set -e
 ELF="$1"
 BIN="${ELF%.elf}.bin"
 
-sudo bash -c "./mkrootfs-aarch64.sh"
+./mkrootfs-aarch64.sh
 
 # Convert to binary format
 aarch64-none-elf-objcopy -O binary "$ELF" "$BIN"

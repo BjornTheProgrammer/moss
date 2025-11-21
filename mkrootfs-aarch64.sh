@@ -21,24 +21,27 @@ fi
 
 
 pushd /tmp/bash
-if [ ! -f "$MOUNT/bin/bash" ]; then
+if [ ! -f "/tmp/bash/bash" ]; then
     ./configure --without-bash-malloc --enable-static-link --host=aarch64-linux-gnu CC=aarch64-linux-gnu-gcc
     make
+fi
 
-    mkdir -p "$MOUNT/bin"
-    cp bash "$MOUNT/bin"
+if [ ! -f "$MOUNT/bin/bash" ]; then
+    sudo mkdir -p "$MOUNT/bin"
+    sudo cp bash "$MOUNT/bin"
 fi
 popd
 
 # busybox -- I couldn't get this to build.  I ended up restoring to a third-party static binary which isn't ideal but it get's things running.
-pushd "$MOUNT/bin"
-if [ ! -f busybox-aarch64-linux-gnu ]; then
+pushd "/tmp"
+if [ ! -f "$MOUNT/bin/busybox-aarch64-linux-gnu" ]; then
     wget https://github.com/shutingrz/busybox-static-binaries-fat/raw/refs/heads/main/busybox-aarch64-linux-gnu
     chmod +x busybox-aarch64-linux-gnu
+    sudo cp busybox-aarch64-linux-gnu "$MOUNT/bin"
 fi
 popd
 
-mkdir -p "$MOUNT/dev"
+sudo mkdir -p "$MOUNT/dev"
 
 if mountpoint -q "$MOUNT"; then
     sudo umount "$MOUNT"
