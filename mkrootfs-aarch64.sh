@@ -4,15 +4,16 @@ set -euo pipefail
 IMG="test.img"
 MOUNT="/mnt/moss"
 
-sudo mkdir -p "$MOUNT"
-
-if [ ! -f "$IMG" ]; then
-    dd if=/dev/zero of="$IMG" bs=1M count=128
-    mkfs.vfat -F 32 "$IMG"
+if [ -f "$IMG" ]; then
+    echo "initrd file $IMG already exists.  Skipping."
+    exit 0
 fi
 
+dd if=/dev/zero of="$IMG" bs=1M count=128
+mkfs.vfat -F 32 "$IMG"
+
 if ! mountpoint -q "$MOUNT"; then
-    sudo mount -o loop "$IMG" "$MOUNT"
+    mount -o loop "$IMG" "$MOUNT"
 fi
 
 if [ ! -d /tmp/bash ]; then
@@ -44,5 +45,5 @@ popd
 sudo mkdir -p "$MOUNT/dev"
 
 if mountpoint -q "$MOUNT"; then
-    sudo umount "$MOUNT"
+    umount "$MOUNT"
 fi
