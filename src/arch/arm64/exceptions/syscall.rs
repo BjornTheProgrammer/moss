@@ -1,7 +1,7 @@
 use crate::kernel::power::sys_reboot;
 use crate::{
     arch::{Arch, ArchImpl},
-    clock::gettime::sys_clock_gettime,
+    clock::{gettime::sys_clock_gettime, timeofday::sys_gettimeofday},
     fs::{
         dir::sys_getdents64,
         pipe::sys_pipe2,
@@ -210,6 +210,7 @@ pub async fn handle_syscall() {
         0x9b => sys_getpgid(arg1 as _),
         0xa0 => sys_uname(TUA::from_value(arg1 as _)).await,
         0xa6 => sys_umask(arg1 as _).map_err(|e| match e {}),
+        0xa9 => sys_gettimeofday(TUA::from_value(arg1 as _), TUA::from_value(arg2 as _)).await,
         0xac => sys_getpid().map_err(|e| match e {}),
         0xad => sys_getppid().map_err(|e| match e {}),
         0xae => sys_getuid().map_err(|e| match e {}),
